@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from app.core.boot import boot_services
@@ -13,7 +15,7 @@ def create_app() -> FastAPI:
     services = boot_services()
 
     # Initialize the FastAPI app
-    app = FastAPI(title="rpn calculator server")
+    app = FastAPI(title="rpn calculator server", lifespan=lifespan)
 
     # Attach services to app.state
     app.state.services = services
@@ -21,13 +23,11 @@ def create_app() -> FastAPI:
     # Routers
     app.include_router(api_router)
 
-    # Startup/Shutdown Events
-    @app.on_event("startup")
-    async def on_startup():
-        services["logger"].info(f"{app.title} has started...")
-
-    @app.on_event("shutdown")
-    async def on_shutdown():
-        services["logger"].info(f"{app.title} has shutdown...")
-
     return app
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.services["logger"].info(f"{app.title} has started...")
+    yield
+    app.state.services["logger"].info(f"{app.title} has shutdown...")

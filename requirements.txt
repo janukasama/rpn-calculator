@@ -8,3 +8,5 @@ asyncpg==0.30.0
 starlette==0.46.2
 alembic==1.15.2
 psycopg2-binary==2.9.10
+
+

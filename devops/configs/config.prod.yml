@@ -1,0 +1,4 @@
+calculation_db:
+  host: calculation-db
+  port: 5432
+  database: calculation_db

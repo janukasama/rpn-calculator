@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
 
-  calculation_db:
+  calculation-db:
     image: postgres:16
     container_name: calculation-db
     restart: unless-stopped
@@ -16,6 +16,30 @@ services:
       - calculation_db_password
     volumes:
       - calculation_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_net
+
+  api-server:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    depends_on:
+      - calculation-db
+    restart: unless-stopped
+    volumes:
+      - ../configs/config.${AYOMI_ENV}.yml:/CONFIG:ro
+    secrets:
+      - calculation_db_username
+      - calculation_db_password
+    ports:
+      - "8000:8000"
+    networks:
+      - app_net
 
 
 secrets:
@@ -27,3 +51,7 @@ secrets:
 # Only for this task, we can handle this based on the environments (e.g: dev, staging, prod)
 volumes:
   calculation_db:
+
+networks:
+  app_net:
+    driver: bridge

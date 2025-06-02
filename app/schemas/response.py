@@ -13,4 +13,4 @@ class OperationRead(BaseModel):
     created_time: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

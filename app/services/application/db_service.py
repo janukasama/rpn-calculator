@@ -1,4 +1,4 @@
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
@@ -26,10 +26,10 @@ class DBService:
             result_proxy = await self.__db_session.execute(stmt)
             await self.__db_session.commit()
 
-            row = result_proxy.fetchone()
-            if row is not None:
+            operation = result_proxy.scalars().one_or_none()
+            if operation is not None:
                 self.__logger.info(f"Inserted operation for user_id={user_id} with expression='{expression}'")
-                return row
+                return operation
 
             self.__logger.warning(f"Operation already exists for user_id={user_id} and expression='{expression}'")
             select_stmt = select(Operation).where(

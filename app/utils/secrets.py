@@ -31,10 +31,11 @@ class Secrets(Enum):
         return:
         - Optional[str]: The secret value if found, else None.
         """
-        file_path = os.path.join(folder, f"{secret_name}.txt")
-        if os.path.isfile(file_path):
-            with open(file_path, 'r') as file:
-                return file.read().strip()
+        file_path = [os.path.join(folder, f"{secret_name}.txt"), os.path.join(folder, secret_name)]
+        for each_file_path in file_path:
+            if os.path.isfile(each_file_path):
+                with open(each_file_path, 'r') as file:
+                    return file.read().strip()
         return None
 
     def get_value(self) -> str:
@@ -64,6 +65,3 @@ class Secrets(Enum):
 
         # Raise exception if secret is not found
         raise SecretNotFound(f"The secret `{self.name}` is not found in the secrets folder")
-
-
-Secrets.calculation_db_password.get_value()
