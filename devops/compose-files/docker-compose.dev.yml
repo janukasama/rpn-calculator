@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+
+  calculation_db:
+    ports:
+      - "5434:5432"

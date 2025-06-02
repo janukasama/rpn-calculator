@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+
+  calculation_db:
+    image: postgres:16
+    container_name: calculation-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: calculation_db
+      POSTGRES_USER: /run/secrets/calculation_db_username
+      POSTGRES_PASSWORD: /run/secrets/calculation_db_password
+    volumes:
+      - calculation_db:/var/lib/postgresql/data
+
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+
+# Only for this task, we can handle this based on the environments (e.g: dev, staging, prod)
+volumes:
+  calculation_db:
