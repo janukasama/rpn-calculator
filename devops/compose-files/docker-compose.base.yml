@@ -8,15 +8,21 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: calculation_db
-      POSTGRES_USER: /run/secrets/calculation_db_username
-      POSTGRES_PASSWORD: /run/secrets/calculation_db_password
+      POSTGRES_USER_FILE: /run/secrets/calculation_db_username
+      POSTGRES_PASSWORD_FILE: /run/secrets/calculation_db_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    secrets:
+      - calculation_db_username
+      - calculation_db_password
     volumes:
       - calculation_db:/var/lib/postgresql/data
 
 
 secrets:
-  db_password:
-    file: ./db_password.txt
+  calculation_db_username:
+    file: ../secrets/calculation_db_username.txt
+  calculation_db_password:
+    file: ../secrets/calculation_db_password.txt
 
 # Only for this task, we can handle this based on the environments (e.g: dev, staging, prod)
 volumes:
