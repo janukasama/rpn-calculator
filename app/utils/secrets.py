@@ -16,8 +16,8 @@ class Secrets(Enum):
     """
 
     # Define secrets needed for the service
-    CALCULATION_DB_USERNAME = auto()
-    CALCULATION_DB_PASSWORD = auto()
+    calculation_db_username = auto()
+    calculation_db_password = auto()
 
     @staticmethod
     def _get_from_folder(secret_name: str, folder: str = '/run/secrets') -> Optional[str]:
@@ -31,7 +31,7 @@ class Secrets(Enum):
         return:
         - Optional[str]: The secret value if found, else None.
         """
-        file_path = os.path.join(folder, secret_name)
+        file_path = os.path.join(folder, f"{secret_name}.txt")
         if os.path.isfile(file_path):
             with open(file_path, 'r') as file:
                 return file.read().strip()
@@ -52,15 +52,18 @@ class Secrets(Enum):
         if secret_value is not None:
             return secret_value
 
-        # 2. Check folder /run/secrets/eds-pseudo (dev)
+        # 2. Check folder /run/secrets/rpn-calculator(dev)
         secret_value = self._get_from_folder(secret_name=self.name, folder='/run/secrets/rpn-calculator')
         if secret_value is not None:
             return secret_value
 
-        # 4. Check folder /etc/secrets/eds-pseudo (dev on MacOS)
+        # 4. Check folder /etc/secrets/rpn-calculator (dev on MacOS)
         secret_value = self._get_from_folder(secret_name=self.name, folder='/etc/secrets/rpn-calculator')
         if secret_value is not None:
             return secret_value
 
         # Raise exception if secret is not found
         raise SecretNotFound(f"The secret `{self.name}` is not found in the secrets folder")
+
+
+Secrets.calculation_db_password.get_value()

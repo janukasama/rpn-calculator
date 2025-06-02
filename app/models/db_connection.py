@@ -1,9 +1,42 @@
-import os
-
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from app.utils.config import ConfigLoader
+from app.utils.secrets import Secrets
+
+
+def get_async_db_url() -> str:
+    """
+        Generate a async database connection.
+
+        return:
+            str: The formatted database connection string.
+    """
+    config = ConfigLoader.load()
+    try:
+        return (
+            f'postgresql+asyncpg://{Secrets.calculation_db_username.get_value()}:{Secrets.calculation_db_password.get_value()}'
+            f'@{config.calculation_db.host}:{config.calculation_db.port}/{config.calculation_db.database}'
+        )
+    except Exception as e:
+        raise Exception(str(e))
+
+
+def get_sync_db_url():
+    """
+        Generate a sync database connection for alembic.
+
+        return:
+            str: The formatted database connection string.
+    """
+    config = ConfigLoader.load()
+    try:
+        return (
+            f'postgresql+psycopg2://{Secrets.calculation_db_username.get_value()}:{Secrets.calculation_db_password.get_value()}'
+            f'@{config.calculation_db.host}:{config.calculation_db.port}/{config.calculation_db.database}'
+        )
+    except Exception as e:
+        raise Exception(str(e))
 
 
 def get_async_engine():
@@ -42,39 +75,3 @@ async def get_async_db_session() -> AsyncSession:
             raise
         finally:
             await session.close()  # Ensure the session is closed
-
-
-def get_async_db_url() -> str:
-    """
-        Generate a async database connection.
-
-        return:
-            str: The formatted database connection string.
-    """
-    config = ConfigLoader.load()
-    try:
-        return (
-            f'postgresql+asyncpg://{os.environ.get("POSTGRES_USER")}:{os.environ.get("POSTGRES_PASSWORD")}'
-            f'@{config.tender_db.host}:{config.tender_db.port}/'
-            f'{config.tender_db.database}'
-        )
-    except Exception as e:
-        raise Exception(str(e))
-
-
-def get_sync_db_url():
-    """
-        Generate a sync database connection for alembic.
-
-        return:
-            str: The formatted database connection string.
-    """
-    config = ConfigLoader.load()
-    try:
-        return (
-            f'postgresql+psycopg2://{os.environ.get("POSTGRES_USER")}:{os.environ.get("POSTGRES_PASSWORD")}'
-            f'@{config.tender_db.host}:{config.tender_db.port}/'
-            f'{config.tender_db.database}'
-        )
-    except Exception as e:
-        raise Exception(str(e))
