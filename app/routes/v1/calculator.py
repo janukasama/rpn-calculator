@@ -12,7 +12,25 @@ router = APIRouter()
 
 
 @router.post("/calculate", response_model=OperationRead)
-async def calculate(request: Request, op: OperationCreate, db_session: AsyncSession = Depends(get_async_db_session)):
+async def calculate(
+    request: Request,
+    op: OperationCreate,
+    db_session: AsyncSession = Depends(get_async_db_session)
+):
+    """
+    Calculate the result of a given reverse Polish notation (RPN) expression.
+
+    params:
+        request: Starlette request object providing access to the application state.
+        op: OperationCreate schema instance containing the RPN expression and user ID.
+        db_session: SQLAlchemy async session dependency.
+
+    returns:
+        OperationRead: Contains the result of the expression and operation metadata.
+
+    raises:
+        HTTPException: 500 error if the calculation fails.
+    """
     try:
         response = await CalculatorService(
             app_state=request.app.state,
@@ -27,7 +45,23 @@ async def calculate(request: Request, op: OperationCreate, db_session: AsyncSess
 
 
 @router.get("/export")
-async def export_csv(request: Request, db_session: AsyncSession = Depends(get_async_db_session)):
+async def export_csv(
+    request: Request,
+    db_session: AsyncSession = Depends(get_async_db_session)
+):
+    """
+    Export all RPN calculation operations as a downloadable CSV file.
+
+    params:
+        request: Starlette request object providing access to the application state.
+        db_session: SQLAlchemy async session dependency.
+
+    returns:
+        StreamingResponse: CSV stream containing historical operation data.
+
+    raises:
+        HTTPException: 500 error if the CSV generation fails.
+    """
     try:
         row_gen = await CalculatorService(
             app_state=request.app.state,
