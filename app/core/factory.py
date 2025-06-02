@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.core.boot import boot_services
+from app.routes.v1.api import api_router
 
 
 def create_app() -> FastAPI:
@@ -18,7 +19,7 @@ def create_app() -> FastAPI:
     app.state.services = services
 
     # Routers
-    # app.include_router(tender_router)
+    app.include_router(api_router)
 
     # Startup/Shutdown Events
     @app.on_event("startup")
