@@ -33,3 +33,12 @@ class CalculatorService:
         if len(stack) != 1:
             raise ValueError("Invalid RPN expression")
         return stack[0]
+
+    async def generate_csv_file(self):
+        async def row_generator():
+            yield "id|expression|result|user_id|created_time\n"
+            async for batch in self.__database_service.fetch_operations_in_batches():
+                for op in batch:
+                    yield f"{op.id}|{op.expression}|{op.result}|{op.user_id}|{op.created_time.isoformat()}\n"
+        return row_generator
+

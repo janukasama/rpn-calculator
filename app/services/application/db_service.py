@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
@@ -41,3 +41,16 @@ class DBService:
         except SQLAlchemyError as e:
             self.__logger.error(f"Database error while creating operation: {e}")
             raise
+
+    async def fetch_operations_in_batches(self, chunk_size=1000):
+        stmt = select(Operation)
+        stream = await self.__db_session.stream(stmt)
+
+        batch = []
+        async for result in stream:
+            batch.append(result.Operation)
+            if len(batch) == chunk_size:
+                yield batch
+                batch = []
+        if batch:
+            yield batch
