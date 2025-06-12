@@ -57,12 +57,17 @@ cd <repository-directory>
 
 ### 3. Create secrets and set environment variables
 
-Set the following environment variables with your desired values:
+Create the secrets with your desired values:
 
 ```bash
 mkdir devops/secrets
 echo "desired_value" > devops/secrets/calculation_db_username.txt
 echo "desired_value" > devops/secrets/calculation_db_password.txt
+```
+
+Set the following environment variable:
+
+```bash
 export AYOMI_ENV="prod"
 ```
 
