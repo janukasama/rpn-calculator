@@ -1,4 +1,4 @@
-# Ayomi Interview Task
+# RPN-Calculator
 
 ## Setup Guide
 
@@ -40,7 +40,7 @@ docker compose version
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/janukasama/ayomi-interview-task.git
+git clone https://github.com/janukasama/rpn-calculator.git
 ```
 
 ---
